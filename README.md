@@ -49,8 +49,6 @@ $ bun run dev
 
 This project is under the MIT license. See the [LICENSE](LICENSE) for details.
 
-> Credit to Fellipe Utaka for the [Discord Bot Template](https://github.com/fellipeutaka/discord-bot-template)
-
 [pr]: https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request
 [git]: https://git-scm.com
 [node]: https://nodejs.org/
