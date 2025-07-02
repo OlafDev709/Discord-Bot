@@ -18,10 +18,7 @@ export const client = new Client({
     GatewayIntentBits.DirectMessageReactions,
     GatewayIntentBits.MessageContent,
   ],
-  partials: [
-    Partials.Channel,
-    Partials.Message  
-  ]
+  partials: [Partials.Channel, Partials.Message],
 });
 
 client.once("ready", (client) => {
@@ -36,7 +33,7 @@ client.on("guildCreate", async (guild) => {
 
   const channel = guild.systemChannel;
   if (channel) {
-    await channel.send('hi');
+    await channel.send("hi");
   }
 });
 
