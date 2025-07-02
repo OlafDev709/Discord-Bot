@@ -6,10 +6,10 @@ export const city = 'Athens';
 export const timezone = 'Europe/Athens';
 
 export const speed = {
-  minDelay: 1,
-  maxDelay: 1,
+  minDelay: 5,
+  maxDelay: 15,
   speedMethod: 'divide',
-  speedFactor: 6000000000,
+  speedFactor: 60,
 };
 
 export const statuses = ['online', 'idle', 'dnd', 'offline'];
@@ -22,10 +22,10 @@ export const activities = [
 
 export const messageThreshold = 10;
 export const initialMessages = [
-  { role: 'user', content: 'tom_techy: how ru' },
-  { role: 'assistant', content: 'zenix_bits: just the normal life. how abt u' },
-  { role: 'user', content: 'tom_techy: what are you doing' },
-  { role: 'assistant', content: 'zenix_bits: coding stuff idk lol' },
+  { role: 'user' as const, content: 'tom_techy: how ru' },
+  { role: 'assistant' as const, content: 'zenix_bits: just the normal life. how abt u' },
+  { role: 'user' as const, content: 'tom_techy: what are you doing' },
+  { role: 'assistant' as const, content: 'zenix_bits: coding stuff idk lol' },
 ];
 
 export const voice = {

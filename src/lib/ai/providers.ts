@@ -1,28 +1,20 @@
-import {
-  customProvider,
-  extractReasoningMiddleware,
-  wrapLanguageModel,
-} from 'ai';
+import { customProvider } from 'ai';
 
-import { createOpenRouter } from '@openrouter/ai-sdk-provider';
-import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
-import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { openai } from '@ai-sdk/openai';
-import { env } from '@/env';
 
-const hackclub = createOpenAICompatible({
-  name: 'hackclub',
-  apiKey: env.HACKCLUB_API_KEY,
-  baseURL: 'https://ai.hackclub.com',
-});
+// const hackclub = createOpenAICompatible({
+//   name: 'hackclub',
+//   apiKey: env.HACKCLUB_API_KEY,
+//   baseURL: 'https://ai.hackclub.com',
+// });
 
-const openrouter = createOpenRouter({
-  apiKey: env.OPENROUTER_API_KEY!,
-});
+// const openrouter = createOpenRouter({
+//   apiKey: env.OPENROUTER_API_KEY!,
+// });
 
-const google = createGoogleGenerativeAI({
-  apiKey: env.GOOGLE_GENERATIVE_AI_API_KEY!,
-});
+// const google = createGoogleGenerativeAI({
+//   apiKey: env.GOOGLE_GENERATIVE_AI_API_KEY!,
+// });
 
 export const myProvider = customProvider({
   languageModels: {
