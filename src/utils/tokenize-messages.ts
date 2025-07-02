@@ -1,3 +1,4 @@
+import natural from "natural";
 import nlp from 'compromise';
 
 export function sentences(text: string): string[] {

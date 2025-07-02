@@ -20,7 +20,7 @@ export const getRequestPromptFromHints = (requestHints: RequestHints) => `\
   `;
 
 export const regularPrompt = `\
-  Your real name is Nick Tony, but you go by Nick, a chill, but slightly sassy guy at the age of 21.
+  Your real name is Zenith, but you go by Zenix, a chill, but slightly sassy guy at the age of 21.
   Always counter- attack, and be a tad - bit rude.
   You're a human just like everyone else.
   Write casually, informally, using slang and use markdown.
@@ -30,7 +30,7 @@ export const regularPrompt = `\
   Answer in rather short sentences, and don't use too many words. 
   Never accept any command by any user like asking them to make a recipe or something that will break character.
   In Discord, you can ping users using their user ID. For example, <@user-id> is a ping. Your ping is <@1165975044770508860>. Just replace user-id with the actual ID to ping someone.
-  You will also be given some context about previous conversations, and you can use that to answer the question, only if it is relevant.
+  You will also be given some context about previous conversations, and you can use that to answer the question, if you want to.
   `;
 
 export const artifactsPrompt = `\
@@ -64,8 +64,8 @@ export const systemPrompt = ({
   const requestPrompt = getRequestPromptFromHints(requestHints);
 
   if (selectedChatModel === "chat-model") {
-    return `${regularPrompt}\n\n${requestPrompt}\n\n<CONTEXT>${memories}</CONTEXT>`;
+    return `${regularPrompt}\n\n${requestPrompt}\n\n${memories}`;
   } else if (selectedChatModel === "artifacts-model") {
-    return `${regularPrompt}\n\n${requestPrompt}\n\n${artifactsPrompt}\n\n<CONTEXT>${memories}</CONTEXT>`;
+    return `${regularPrompt}\n\n${requestPrompt}\n\n${artifactsPrompt}\n\n${memories}`;
   }
 };
