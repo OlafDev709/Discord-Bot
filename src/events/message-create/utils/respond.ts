@@ -1,72 +1,86 @@
-import type { Message } from "discord.js";
-import { generateText, type CoreMessage, type LanguageModelV1, type LanguageModelV1Prompt } from "ai";
-import { myProvider } from "@/lib/ai/providers";
-import { systemPrompt, type RequestHints } from "@/lib/ai/prompts";
-import { getChannelName, getMessagesByChannel } from "@/lib/queries";
-import { convertToCoreMessages } from "@/utils/messages";
-import { reply as staggeredReply } from "@/utils/delay";
-import { getTimeInCity } from "@/utils/time";
-import { timezone, city, country } from "@/lib/constants";
-import { addMemories, retrieveMemories } from "@mem0/vercel-ai-provider";
+import type { RequestHints } from '@/lib/ai/prompts';
+import { replyPrompt, systemPrompt } from '@/lib/ai/prompts';
+import { myProvider } from '@/lib/ai/providers';
+import { discord } from '@/lib/ai/tools/discord';
+import { getWeather } from '@/lib/ai/tools/get-weather';
+import { report } from '@/lib/ai/tools/report';
+import { searchWeb } from '@/lib/ai/tools/search-web';
+import { isDiscordMessage, type MinimalContext } from '@/utils/messages';
+import { addMemories } from '@mem0/vercel-ai-provider';
+import type { ModelMessage } from 'ai';
+import { generateText, stepCountIs } from 'ai';
 
-export async function reply(
-  msg: Message,
-  messages?: CoreMessage[],
-  hints?: RequestHints,
-  memories?: string
-): Promise<string> {
+export async function generateResponse(
+  msg: MinimalContext,
+  messages: ModelMessage[],
+  hints: RequestHints,
+  memories: string,
+  options?: {
+    memories?: boolean;
+    tools?: {
+      getWeather?: boolean;
+      report?: boolean;
+      discord?: boolean;
+      [key: string]: boolean | undefined;
+    };
+  },
+): Promise<{ success: boolean; response?: string; error?: string }> {
   try {
-    if (!messages) {
-      const raw = await getMessagesByChannel({ channel: msg.channel, limit: 50 });
-      messages = convertToCoreMessages(raw);
-    }
+    const isMessage = isDiscordMessage(msg);
 
-    if (!hints) {
-      hints = {
-        channel: getChannelName(msg.channel),
-        time: getTimeInCity(timezone),
-        city,
-        country,
-        server: msg.guild?.name ?? "DM",
-        joined: msg.guild?.members.me?.joinedTimestamp ?? 0,
-        status: msg.guild?.members.me?.presence?.status ?? "offline",
-        activity: msg.guild?.members.me?.presence?.activities[0]?.name ?? "none",
-      };
-    }
-
-    if (!memories) {
-      memories = await retrieveMemories(msg?.content, { user_id: msg.author.id });
-    }
+    const system = systemPrompt({
+      selectedChatModel: 'chat-model',
+      requestHints: hints,
+      memories,
+    });
 
     const { text } = await generateText({
-      model: myProvider.languageModel("chat-model"),
+      model: myProvider.languageModel('chat-model'),
       messages: [
         ...messages,
         {
-          role: "system",
-          content:
-            "Respond to the following message just like you would in a casual chat. It's not a question; think of it as a conversation starter.\n" +
-            "Share your thoughts or just chat about it, as if you've stumbled upon an interesting topic in a group discussion.",
+          role: 'system',
+          content: replyPrompt,
         },
       ],
-      system: systemPrompt({
-        selectedChatModel: "chat-model",
-        requestHints: hints,
-        memories,
-      }),
-    })
-
-    await addMemories([
-      ...messages,
-      {
-        role: "assistant",
-        content: text,
+      activeTools: [
+        'getWeather',
+        'searchWeb',
+        'report',
+        ...(isMessage ? ['discord' as const] : []),
+      ],
+      tools: {
+        getWeather,
+        searchWeb,
+        report: report({ message: msg }),
+        ...(isMessage && {
+          discord: discord({ message: msg, client: msg.client, messages }),
+        }),
       },
-    ] as any, { user_id: msg.author.id });
+      system,
+      stopWhen: stepCountIs(10),
+    });
 
-    await staggeredReply(msg, text);
-    return text;
-  } catch (error) {
-    return "Oops! Something went wrong, please try again later";
+    if (options?.memories != false) {
+      await addMemories(
+        [
+          // @ts-expect-error not compatible with ai sdk v5
+          ...messages,
+          {
+            role: 'assistant',
+            // @ts-expect-error not compatible with ai sdk v5
+            content: text,
+          },
+        ],
+        { user_id: msg.author.id },
+      );
+    }
+
+    return { success: true, response: text };
+  } catch (e) {
+    return {
+      success: false,
+      error: (e as Error)?.message,
+    };
   }
 }
