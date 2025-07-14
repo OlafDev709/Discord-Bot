@@ -1,7 +1,7 @@
 <h1 align="center">AI Discord Bot</h4>
 
 ## 📋 Table of Contents
-
+ 
 1. 🤖 [Introduction](#introduction)
 2. 🚀 [Tech Stack](#tech-stack)
 3. 📚 [Getting Started](#getting-started)
