@@ -22,7 +22,7 @@ This project was developed with the following technologies:
 - [Bun][bun]
 - [ESLint][eslint]
 - [Prettier][prettier]
-
+ 
 ## <a name="getting-started">📚 Getting Started</a>
 
 To clone and run this application, first you need to create a [Discord Bot](https://www.androidpolice.com/how-to-make-discord-bot/). Afterwards, you will need [Git][git] and [Bun][bun] installed on your computer.
